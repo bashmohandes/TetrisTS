@@ -7,6 +7,8 @@ var gutil = require("gulp-util");
 var uglify = require('gulp-uglify');
 var sourcemaps = require('gulp-sourcemaps');
 var buffer = require('vinyl-buffer');
+var browserSync = require('browser-sync').create();
+
 var paths = {
     pages: ['src/*.html']
 };
@@ -32,9 +34,15 @@ function bundle() {
         .pipe(sourcemaps.init({loadMaps: true}))
         .pipe(uglify())
         .pipe(sourcemaps.write('./'))    
-        .pipe(gulp.dest("dist"));
+        .pipe(gulp.dest("dist"))
+        .pipe(browserSync.stream());
 }
 
 gulp.task("default", ["copy-html"], bundle);
 watchedBrowserify.on("update", bundle);
 watchedBrowserify.on("log", gutil.log);
+browserSync.init({
+    logFileChanges:false,
+    server: './dist',
+    browser: 'Google Chrome'
+});
