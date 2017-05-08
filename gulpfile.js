@@ -4,13 +4,9 @@ var source = require('vinyl-source-stream');
 var watchify = require("watchify");
 var tsify = require("tsify");
 var gutil = require("gulp-util");
-var uglify = require('gulp-uglify');
-var sourcemaps = require('gulp-sourcemaps');
-var buffer = require('vinyl-buffer');
-var browserSync = require('browser-sync').create();
-
 var paths = {
-    pages: ['src/*.html']
+    pages: ['src/*.html'],
+    js: ['src/sketch.js']
 };
 
 var watchedBrowserify = watchify(browserify({
@@ -26,23 +22,18 @@ gulp.task("copy-html", function () {
         .pipe(gulp.dest("dist"));
 });
 
-function bundle() {
+gulp.task("copy-js", function () {
+    return gulp.src(paths.js)
+        .pipe(gulp.dest("dist"));
+});
+
+function bundle() {    
     return watchedBrowserify
         .bundle()
         .pipe(source('bundle.js'))
-        .pipe(buffer())
-        .pipe(sourcemaps.init({loadMaps: true}))
-        .pipe(uglify())
-        .pipe(sourcemaps.write('./'))    
-        .pipe(gulp.dest("dist"))
-        .pipe(browserSync.stream());
+        .pipe(gulp.dest("dist"));
 }
 
-gulp.task("default", ["copy-html"], bundle);
+gulp.task("default", ["copy-html", "copy-js"], bundle);
 watchedBrowserify.on("update", bundle);
 watchedBrowserify.on("log", gutil.log);
-browserSync.init({
-    logFileChanges:false,
-    server: './dist',
-    browser: 'Google Chrome'
-});
