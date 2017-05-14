@@ -1,5 +1,7 @@
 {
     "files": [
+        "src/typings/p5.d.ts",
+        "src/typings/p5.global-mode.d.ts",
         "src/main.ts",
         "src/Models/Cell.ts"
     ],
